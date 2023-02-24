@@ -4,7 +4,7 @@ import styles from "./card.module.css";
 import cls from "classnames";
 const Card = (props) => {
   return (
-    <Link href={props.href}>
+    <Link href={props.href} rel="preload">
       <div className={styles.cardLink}>
         <div className={cls("glass", styles.container)}>
           <div className={styles.cardHeaderWrapper}>
@@ -16,6 +16,7 @@ const Card = (props) => {
               src={props.imgUrl}
               width={260}
               height={160}
+              alt={props.name}
             />
           </div>
         </div>
