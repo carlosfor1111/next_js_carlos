@@ -1,27 +1,32 @@
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import Head from "next/head";
 import Image from "next/image";
 import cls from "classnames";
 import { fetchCoffeeStores } from "@/lib/coffee-store";
+import { StoreContent } from "../_app";
+import { isEmpty } from "@/utils";
 import styles from "../../styles/coffee-store.module.css";
-export async function getStaticProps({ params }) {
+export async function getStaticProps(staticProps) {
+  const params = staticProps.params;
   const coffeeStores = await fetchCoffeeStores();
-  const findCoffeeStoreById = {
-    coffeeStore: coffeeStores.find(
-      (coffeeStore) => coffeeStore.id.toString() === params.id
-    ),
-  };
+
+  const findCoffeeStoreById = coffeeStores.find((coffeeStore) => {
+    return coffeeStore.id.toString() === params.id; //dynamic id
+  });
+
   return {
-    props: findCoffeeStoreById ? findCoffeeStoreById : {},
+    props: {
+      coffeeStore: findCoffeeStoreById ? findCoffeeStoreById : {},
+    },
   };
 }
 
 export async function getStaticPaths() {
   const coffeeStores = await fetchCoffeeStores();
 
-  const path = coffeeStores.map((coffeeStore) => {
+  const paths = coffeeStores.map((coffeeStore) => {
     return {
       params: {
         id: coffeeStore.id.toString(),
@@ -29,19 +34,37 @@ export async function getStaticPaths() {
     };
   });
   return {
-    paths: path,
+    paths,
     fallback: true,
   };
 }
 
-const CoffeeStore = (props) => {
+const CoffeeStore = (initialProps) => {
   const router = useRouter();
+  const [coffeeStore, setCoffeeStore] = useState(initialProps.coffeeStore);
+
+  const {
+    state: { coffeeStores },
+  } = useContext(StoreContent);
+
+  const id = router.query.id;
+
+  useEffect(() => {
+    if (isEmpty(initialProps.coffeeStore)) {
+      if (coffeeStores.length > 0) {
+        const findCoffeeStoreById = coffeeStores.find((coffeeStore) => {
+          return coffeeStore.id.toString() === id; //dynamic id
+        });
+        setCoffeeStore(findCoffeeStoreById);
+      }
+    }
+  }, [id]);
 
   if (router.isFallback) {
     return <div>loading...</div>;
   }
 
-  const { postcode, address, name, imgUrl } = props.coffeeStore;
+  const { postcode, address, name, imgUrl } = coffeeStore;
 
   const handleUpVoteButton = () => {
     console.log("handle Up Vote");
