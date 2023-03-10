@@ -5,7 +5,8 @@ import Head from "next/head";
 import Image from "next/image";
 import cls from "classnames";
 import { fetchCoffeeStores } from "@/lib/coffee-store";
-import { StoreContent } from "../_app";
+import { StoreContent } from "@/store/store-context";
+
 import { isEmpty } from "@/utils";
 import styles from "../../styles/coffee-store.module.css";
 export async function getStaticProps(staticProps) {

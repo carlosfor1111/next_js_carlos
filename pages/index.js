@@ -6,8 +6,8 @@ import Banner from "@/components/banner";
 import Card from "@/components/card";
 import { fetchCoffeeStores } from "@/lib/coffee-store";
 import useTrackLocation from "@/hooks/use-track-location";
-import { ACTION_TYPES, StoreContent } from "./_app";
-export async function getStaticProps(context) {
+import { ACTION_TYPES, StoreContent } from "@/store/store-context";
+export async function getStaticProps() {
   const coffeeStores = await fetchCoffeeStores();
 
   return {
