@@ -4,7 +4,7 @@ import Image from "next/image";
 import styles from "@/styles/Home.module.css";
 import Banner from "@/components/banner";
 import Card from "@/components/card";
-import { fetchCoffeeStores } from "@/lib/coffee-store";
+import { fetchCoffeeStores } from "@/lib/coffee-stores";
 import useTrackLocation from "@/hooks/use-track-location";
 import { ACTION_TYPES, StoreContent } from "@/store/store-context";
 export async function getStaticProps() {
@@ -32,12 +32,15 @@ export default function Home(props) {
   async function setCoffeeStoresByLocation() {
     if (latLong) {
       try {
-        const fetchedCoffeeStores = await fetchCoffeeStores(latLong, 30);
-
+        const fetchedCoffeeStores = await fetch(
+          `/api/getCoffeeStoresByLocation?latLong=${latLong}&limit=30`
+        );
+        const coffeeStores = await fetchedCoffeeStores.json();
         dispatch({
           type: ACTION_TYPES.SET_COFFEE_STORES,
-          payload: { coffeeStores: fetchedCoffeeStores },
+          payload: { coffeeStores },
         });
+        setCoffeeStoresError("");
         //set coffee stores
       } catch (error) {
         //set error

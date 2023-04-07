@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
-import styles from "./card.module.css";
 import cls from "classnames";
+import styles from "./card.module.css";
 const Card = (props) => {
   return (
     <Link href={props.href} rel="preload">

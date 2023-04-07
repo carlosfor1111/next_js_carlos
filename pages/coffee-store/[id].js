@@ -4,7 +4,7 @@ import Link from "next/link";
 import Head from "next/head";
 import Image from "next/image";
 import cls from "classnames";
-import { fetchCoffeeStores } from "@/lib/coffee-store";
+import { fetchCoffeeStores } from "@/lib/coffee-stores";
 import { StoreContent } from "@/store/store-context";
 import { isEmpty } from "@/utils";
 import styles from "../../styles/coffee-store.module.css";
@@ -51,19 +51,15 @@ const CoffeeStore = (initialProps) => {
   const id = router.query.id;
 
   useEffect(() => {
-    if (isEmpty(initialProps.coffeeStore)) {
-      if (coffeeStores.length > 0) {
-        const findCoffeeStoreById = coffeeStores.find((coffeeStore) => {
-          return coffeeStore.id.toString() === id; //dynamic id
-        });
-        setCoffeeStore(findCoffeeStoreById);
-      }
+    if (coffeeStores.length > 0 && isEmpty(initialProps.coffeeStore)) {
+      const findCoffeeStoreById = coffeeStores.find((coffeeStore) => {
+        return coffeeStore.id.toString() === id; //dynamic id
+      });
+      setCoffeeStore(findCoffeeStoreById);
     }
   }, [id]);
 
-  if (router.isFallback) {
-    return <div>loading...</div>;
-  }
+  if (router.isFallback) return <div>loading...</div>;
 
   const { postcode, address, name, imgUrl } = coffeeStore;
 
