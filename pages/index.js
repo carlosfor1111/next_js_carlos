@@ -6,7 +6,7 @@ import Banner from "@/components/banner";
 import Card from "@/components/card";
 import { fetchCoffeeStores } from "@/lib/coffee-stores";
 import useTrackLocation from "@/hooks/use-track-location";
-import { ACTION_TYPES, StoreContent } from "@/store/store-context";
+import { ACTION_TYPES, StoreContext } from "@/store/store-context";
 export async function getStaticProps() {
   const coffeeStores = await fetchCoffeeStores();
 
@@ -25,7 +25,7 @@ export default function Home(props) {
     handleTrackLocation();
   };
 
-  const { dispatch, state } = useContext(StoreContent);
+  const { dispatch, state } = useContext(StoreContext);
 
   const { coffeeStores, latLong } = state;
 

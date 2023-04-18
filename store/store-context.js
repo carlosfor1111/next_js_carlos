@@ -1,6 +1,6 @@
 import { createContext, useReducer } from "react";
 
-export const StoreContent = createContext();
+export const StoreContext = createContext();
 
 export const ACTION_TYPES = {
   SET_LAT_LONG: "SET_LAT_LONG",
@@ -29,9 +29,9 @@ const StoreProvider = ({ children }) => {
   const [state, dispatch] = useReducer(storeReducer, initialState);
 
   return (
-    <StoreContent.Provider value={{ state, dispatch }}>
+    <StoreContext.Provider value={{ state, dispatch }}>
       {children}
-    </StoreContent.Provider>
+    </StoreContext.Provider>
   );
 };
 

@@ -5,28 +5,24 @@ import Head from "next/head";
 import Image from "next/image";
 import cls from "classnames";
 import { fetchCoffeeStores } from "@/lib/coffee-stores";
-import { StoreContent } from "@/store/store-context";
+import { StoreContext } from "@/store/store-context";
 import { isEmpty } from "@/utils";
 import styles from "../../styles/coffee-store.module.css";
-
 export async function getStaticProps(staticProps) {
   const params = staticProps.params;
+  console.log("params", params);
   const coffeeStores = await fetchCoffeeStores();
-
   const findCoffeeStoreById = coffeeStores.find((coffeeStore) => {
     return coffeeStore.id.toString() === params.id; //dynamic id
   });
-
   return {
     props: {
       coffeeStore: findCoffeeStoreById ? findCoffeeStoreById : {},
     },
   };
 }
-
 export async function getStaticPaths() {
   const coffeeStores = await fetchCoffeeStores();
-
   const paths = coffeeStores.map((coffeeStore) => {
     return {
       params: {
@@ -39,34 +35,57 @@ export async function getStaticPaths() {
     fallback: true,
   };
 }
-
 const CoffeeStore = (initialProps) => {
   const router = useRouter();
-  const [coffeeStore, setCoffeeStore] = useState(initialProps.coffeeStore);
-
-  const {
-    state: { coffeeStores },
-  } = useContext(StoreContent);
 
   const id = router.query.id;
-
-  useEffect(() => {
-    if (coffeeStores.length > 0 && isEmpty(initialProps.coffeeStore)) {
-      const findCoffeeStoreById = coffeeStores.find((coffeeStore) => {
-        return coffeeStore.id.toString() === id; //dynamic id
+  const [coffeeStore, setCoffeeStore] = useState(initialProps.coffeeStore);
+  const {
+    state: { coffeeStores },
+  } = useContext(StoreContext);
+  const handleCreateCoffeeStore = async (coffeeStore) => {
+    try {
+      const { id, name, voting, imgUrl, postcode, address } = coffeeStore;
+      const response = await fetch("/api/createCoffeeStore", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id,
+          name,
+          voting: 0,
+          imgUrl,
+          postcode: postcode || "",
+          address: address || "",
+        }),
       });
-      setCoffeeStore(findCoffeeStoreById);
+      const dbCoffeeStore = await response.json();
+      console.log({ dbCoffeeStore });
+    } catch (err) {
+      console.error("Error creating coffee store", err);
     }
-  }, [id]);
-
-  if (router.isFallback) return <div>loading...</div>;
-
-  const { postcode, address, name, imgUrl } = coffeeStore;
-
-  const handleUpVoteButton = () => {
-    console.log("handle Up Vote");
   };
+  useEffect(() => {
+    if (isEmpty(initialProps.coffeeStore)) {
+      if (coffeeStores.length > 0) {
+        const findCoffeeStoreById = coffeeStores.find((coffeeStore) => {
+          return coffeeStore.id.toString() === id; //dynamic id
+        });
+        setCoffeeStore(findCoffeeStoreById);
+        handleCreateCoffeeStore(findCoffeeStoreById);
+      }
+    } else {
+      // SSG
+      handleCreateCoffeeStore(initialProps.coffeeStore);
+    }
+  }, [id, initialProps.coffeeStore]);
 
+  const { name, address, postcode, imgUrl } = coffeeStore;
+  if (router.isFallback) {
+    return <div>Loading...</div>;
+  }
+  const handleUpVoteButton = () => {};
   return (
     <div className={styles.layout}>
       <Head>
@@ -115,5 +134,4 @@ const CoffeeStore = (initialProps) => {
     </div>
   );
 };
-
 export default CoffeeStore;
