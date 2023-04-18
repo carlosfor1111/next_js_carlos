@@ -1,13 +1,46 @@
-const Airtable = require("airtable");
-const base = new Airtable({ apiKey: process.env.AIR_TABLE_API_KEY }).base(
-  process.env.AIR_TABLE_BASE_KEY
-);
+import { table, getMinifieldRecords } from "@/lib/airtable";
 
-const table = base("coffee-stores");
+const createCoffeeStore = async (req, res) => {
+  if (req.method === "POST") {
+    //find a record
 
-const createCoffeeStore = (req, res) => {
-  if (req.method === "POST") res.json({ message: "Hi there" });
-  else res.json({ message: "is GET" });
+    const { id, name } = req.body;
+    try {
+      if (id) {
+        const findCoffeeStoreRecords = await table
+          .select({
+            filterByFormula: `id=${id}`,
+          })
+          .firstPage();
+
+        if (findCoffeeStoreRecords.length !== 0) {
+          const records = getMinifieldRecords(findCoffeeStoreRecords);
+          res.json(records);
+        } else {
+          //create a record
+          if (id && name) {
+            const createRecords = await table.create([
+              {
+                fields: req.body,
+              },
+            ]);
+
+            const records = getMinifieldRecords(createRecords);
+            res.json(records);
+          } else {
+            res.status(400);
+            res.json({ message: "Id or name is missing" });
+          }
+        }
+      } else {
+        res.status(400);
+        res.json({ message: "Id is missing" });
+      }
+    } catch (error) {
+      console.error("Error creating or finding a store", error);
+      res.status(500);
+      res.json({ message: "Error creating or finding a store", error });
+    }
+  }
 };
-
 export default createCoffeeStore;
