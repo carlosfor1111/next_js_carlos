@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import Head from "next/head";
 import Image from "next/image";
+import useSWR from "swr";
 import cls from "classnames";
 import { fetchCoffeeStores } from "@/lib/coffee-stores";
 import { StoreContext } from "@/store/store-context";
@@ -82,7 +83,12 @@ const CoffeeStore = (initialProps) => {
   }, [id, initialProps.coffeeStore]);
 
   const [votingCount, setVountingCount] = useState(1);
-
+  const { data, error } = useSWR(`/api/getCoffeeStoresById?id=${id}`);
+  useEffect(() => {
+    if (data) {
+      setCoffeeStore(data[0]);
+    }
+  }, [data]);
   if (router.isFallback) {
     return <div>Loading...</div>;
   }
