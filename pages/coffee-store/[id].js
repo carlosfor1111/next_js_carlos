@@ -48,7 +48,7 @@ const CoffeeStore = (initialProps) => {
   const handleCreateCoffeeStore = async (coffeeStore) => {
     try {
       const { id, name, imgUrl, postcode, address } = coffeeStore;
-      const response = await fetch("/api/createCoffeeStore", {
+      await fetch("/api/createCoffeeStore", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -62,7 +62,6 @@ const CoffeeStore = (initialProps) => {
           address: address || "",
         }),
       });
-      const dbCoffeeStore = await response.json();
     } catch (err) {
       console.error("Error creating coffee store", err);
     }
@@ -80,9 +79,8 @@ const CoffeeStore = (initialProps) => {
       // SSG
       handleCreateCoffeeStore(initialProps.coffeeStore);
     }
-  }, [id, initialProps.coffeeStore]);
-
-  const [voting, setVotingCount] = useState(1);
+  }, [id, initialProps.coffeeStore, coffeeStores]);
+  const [voting, setVotingCount] = useState(0);
   const { data, error } = useSWR(`/api/getCoffeeStoreById?id=${id}`, fetcher);
   useEffect(() => {
     if (data && data.length > 0) {
