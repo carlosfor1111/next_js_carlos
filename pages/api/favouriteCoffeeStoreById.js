@@ -23,7 +23,6 @@ const favouriteCoffeeStoreById = async (req, res) => {
             const minifiedRecords = getMinifieldRecords(updateRecord);
             res.json(minifiedRecords);
           }
-          res.json(records);
         } else {
           res.json({ message: "Coffee store id doesn't exist", id });
         }
