@@ -7,7 +7,7 @@ import useSWR from "swr";
 import cls from "classnames";
 import { fetchCoffeeStores } from "@/lib/coffee-stores";
 import { StoreContext } from "@/store/store-context";
-import { isEmpty } from "@/utils";
+import { isEmpty, fetcher } from "@/utils";
 import styles from "../../styles/coffee-store.module.css";
 export async function getStaticProps(staticProps) {
   const params = staticProps.params;
@@ -82,22 +82,43 @@ const CoffeeStore = (initialProps) => {
     }
   }, [id, initialProps.coffeeStore]);
 
-  const [votingCount, setVountingCount] = useState(1);
-  const { data, error } = useSWR(`/api/getCoffeeStoresById?id=${id}`);
+  const [voting, setVotingCount] = useState(1);
+  const { data, error } = useSWR(`/api/getCoffeeStoreById?id=${id}`, fetcher);
   useEffect(() => {
-    if (data) {
+    if (data && data.length > 0) {
       setCoffeeStore(data[0]);
+      setVotingCount(data[0].voting);
     }
   }, [data]);
+
   if (router.isFallback) {
     return <div>Loading...</div>;
   }
 
   const { name, address, postcode, imgUrl } = coffeeStore;
 
-  const handleUpVoteButton = () => {
-    setVountingCount((prev) => prev + 1);
+  const handleUpVoteButton = async () => {
+    try {
+      const response = await fetch("/api/favouriteCoffeeStoreById", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id,
+        }),
+      });
+      const dbCoffeeStore = await response.json();
+
+      if (dbCoffeeStore && dbCoffeeStore.length > 0) {
+        setVotingCount((prev) => prev + 1);
+      }
+    } catch (err) {
+      console.error("Error upvoting coffee store", err);
+    }
   };
+
+  if (error) return <div>Something went wrong.</div>;
 
   return (
     <div className={styles.layout}>
@@ -124,21 +145,36 @@ const CoffeeStore = (initialProps) => {
         <div className={cls("glass", styles.col2)}>
           {address && (
             <div className={styles.iconWrapper}>
-              <Image src="/static/icons/places.svg" width="24" height="24" />
+              <Image
+                src="/static/icons/places.svg"
+                width="24"
+                height="24"
+                alt="address"
+              />
               <p className={styles.text}>{address}</p>
             </div>
           )}
 
           {postcode && (
             <div className={styles.iconWrapper}>
-              <Image src="/static/icons/nearMe.svg" width="24" height="24" />
+              <Image
+                src="/static/icons/nearMe.svg"
+                width="24"
+                height="24"
+                alt="postcode"
+              />
               <p className={styles.text}>{postcode}</p>
             </div>
           )}
 
           <div className={styles.iconWrapper}>
-            <Image src="/static/icons/star.svg" width="24" height="24" />
-            <p className={styles.text}>{votingCount}</p>
+            <Image
+              src="/static/icons/star.svg"
+              width="24"
+              height="24"
+              alt="stat"
+            />
+            <p className={styles.text}>{voting}</p>
           </div>
           <button className={styles.upvoteButton} onClick={handleUpVoteButton}>
             Up Vote!
