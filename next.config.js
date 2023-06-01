@@ -4,7 +4,8 @@ const nextConfig = {
   images: {
     domains: ["images.unsplash.com"],
   },
-  target: "serverless",
+  // target: "serverless",
+  swcMinify: true,
 };
 
 module.exports = nextConfig;
