@@ -170,7 +170,7 @@ const CoffeeStore = (initialProps) => {
               src="/static/icons/star.svg"
               width="24"
               height="24"
-              alt="stat"
+              alt="star icon"
             />
             <p className={styles.text}>{voting}</p>
           </div>
