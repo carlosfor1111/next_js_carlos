@@ -36,4 +36,67 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
-# next_js_carlos
+
+# Coffee stores
+
+```
+Coffee stores
+
+├─ .gitignore
+├─ .vscode
+│  └─ settings.json
+├─ components
+│  ├─ banner.js
+│  ├─ banner.module.css
+│  ├─ card.js
+│  └─ card.module.css
+├─ data
+│  └─ coffee-stores.json
+├─ hooks
+│  └─ use-track-location.js
+├─ jsconfig.json
+├─ lib
+│  ├─ airtable.js
+│  └─ coffee-stores.js
+├─ next.config.js
+├─ package-lock.json
+├─ package.json
+├─ pages
+│  ├─ api
+│  │  ├─ createCoffeeStore.js
+│  │  ├─ favouriteCoffeeStoreById.js
+│  │  ├─ getCoffeeStoreById.js
+│  │  └─ getCoffeeStoresByLocation.js
+│  ├─ coffee-store
+│  │  └─ [id].js
+│  ├─ index.js
+│  ├─ _app.js
+│  └─ _document.js
+├─ public
+│  ├─ favicon.ico
+│  ├─ fonts
+│  │  ├─ IBMPlexSans-Bold.ttf
+│  │  ├─ IBMPlexSans-Regular.ttf
+│  │  └─ IBMPlexSans-SemiBold.ttf
+│  ├─ next.svg
+│  ├─ static
+│  │  ├─ background.png
+│  │  ├─ background2.png
+│  │  ├─ hero-image.png
+│  │  └─ icons
+│  │     ├─ nearMe.svg
+│  │     ├─ places.svg
+│  │     └─ star.svg
+│  ├─ thirteen.svg
+│  └─ vercel.svg
+├─ README.md
+├─ store
+│  └─ store-context.js
+├─ styles
+│  ├─ coffee-store.module.css
+│  ├─ globals.css
+│  └─ Home.module.css
+└─ utils
+   └─ index.js
+
+```

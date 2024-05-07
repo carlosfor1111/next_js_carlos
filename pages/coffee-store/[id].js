@@ -121,7 +121,7 @@ const CoffeeStore = (initialProps) => {
   return (
     <div className={styles.layout}>
       <Head>
-        <title>{name}</title>{" "}
+        <title>{name}</title>
         <meta name="description" content={`${name} coffee store`}></meta>
       </Head>
       <div className={styles.container}>
